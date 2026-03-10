@@ -11,16 +11,18 @@ tags:
 
 ## ¿Qué es un MCP (Model Context Protocol)?
 
-Se trata de un **estándar de código abierto** para conectar aplicaciones de AI a sistemas externos.
+Se trata de un **estándar de código abierto** para conectar aplicaciones de AI/LLM a sistemas externos o internos, dependen del contexto.
 
 Aplicaciones de AI como **ChatGPT** o **Claude** permiten conectar fuentes de datos externas (ejemplo: archivos, bases de datos) y flujos de trabajo (ejemplo: prompts) y habilitarlos para realizar una tarea en específico.
 
 Piensa en el **MCP** como un puerto **USB-C** para aplicaciones de AI. Un USB-C provee una forma estándar de conectar dispositivos electrónicos; algo similar hace el MCP, provee un estándar para conectar aplicaciones externas a la AI.
 
 ![MCP-Diagram](assets/images/mcp-theory/mcp01.webp)
+
 Fuente: [descope.com](https://www.descope.com/learn/post/mcp)
 
 ![MCP-Diagram](assets/images/mcp-theory/mcp00.avif)
+
 Fuente: [ModelContextProtocol.io](https://modelcontextprotocol.io/docs/getting-started/intro)
 
 Como habrás visto en imágenes anteriores, el **MCP** sería algo muy parecido a una **API** pero mucho más complejo por distintas razones. Antes del MCP, las aplicaciones de AI debían entender previamente las API de cada aplicación externa a la que fueran conectadas, lo cual se volvía muy caótico.
@@ -83,9 +85,11 @@ En la siguiente imagen verás una tipica implementacion de uno o varios servidor
 
 
 ![MCP-Diagram](assets/images/mcp-theory/mcp03.png)
+
 Fuente: [descope.com](https://www.descope.com/learn/post/mcp)
 
 ![MCP-Diagram](assets/images/mcp-theory/mcp04.webp)
+
 Fuente: [medium.com/aimonks](https://medium.com/aimonks/mcp-architecture-all-you-need-2cafe6c7d803)
 
 La arquitectura consiste de los siguientes elementos:
@@ -99,5 +103,112 @@ La arquitectura consiste de los siguientes elementos:
 - **Local Data Sources**: Archivos, bases de datos o servicios a los cuales el MCP puede acceder o conectarse.
 
 
+## Instalación de un MCP Server
+
+Para este ejemplo usaremos una herramienta muy popular en la comunidad de Python: FastMCP.
+
+**Primero, crea una carpeta para la prueba**
+
+```bash
+
+    mkdir mcp-test && cd mcp-test
+
+    uv init .
+
+```
+
+**Instala las dependencias**
+
+```bash
+
+# Si usas PIP
+pip install fastmcp
+
+# Si usas UV
+uv add fastmcp
+
+```  
+
+**Verifica la instalación**
+
+```bash
+
+fastmcp version        # Si usas solamente pip
+
+uv run fastmcp version # Si usas UV
+
+```
+
+### Crea un FastMCP Server
+
+Antes de continuar, te recuerdo que toda esta sección de instalación fue sacada de la documentación de [FastMCP](https://gofastmcp.com/getting-started/welcome). Por último, existen 3 pilares esenciales en el núcleo de FastMCP:
+
+- **Server**  > Expone herramientas, recursos y prompts al LLM.
+
+- **Apps**    > Herramientas interactivas de UI renderizadas directamente en la conversación.
+
+- **Clients** > Conecta cualquier MCP Server, local, remoto o CLI. 
+
+
+**Código**
+
+Instanciamos la clase FastMCP y le damos un título o nombre al servidor.
+
+![Create Server Code 00](./assets/images/mcp-theory/mcp06.png)
+
+Una vez instanciado, debemos otorgarle una herramienta que él pueda listar y ejecutar. En este caso, la primera herramienta es una función de suma; haremos que pueda sumar.
+
+![Create Server Code 01](./assets/images/mcp-theory/mcp07.png)
+
+Ahora ejecuta en la consola el siguiente comando. Una vez ejecutado, debes abrir otra consola en el mismo directorio de trabajo donde estás.
+
+<!-- ```bash
+
+  uv run fastmcp TU_SCRIPT_PYTHON.py:mcp
+
+``` -->
+
+![Create Server Code 01](./assets/images/mcp-theory/mcp08.png)
+
+El comando de arriba ejecutará el script y abrirá un puerto TCP para recibir las peticiones HTTP. Estas peticiones idealmente las haría el LLM.
+
+Crea otro script y escribe el siguiente código.
+ 
+```python
+
+import asyncio
+from fastmcp import Client
+
+client = Client("http://localhost:8000/mcp")
+
+async def call_tool(name: str):
+    async with client:
+        result = await client.call_tool(name, {"a": 20, "b": 20})
+        print(result)
+        return result
+
+asyncio.run(call_tool("add"))
+
+```
+
+Por último, ejecuta el nuevo script.
+
+```bash
+
+uv run mi_nuevo_script.py  # Con uv
+
+# o 
+
+python3 mi_nuevo_script.py # Con python
+
+```
+
+### Finalizado
+
+Eso sería todo. Ya tienes un servidor MCP funcionando en un puerto que puede ejecutar operaciones de cualquier herramienta que le agregues. Cabe destacar que a FastMCP puedes agregarle el LLM de tu preferencia, también autenticación, prompts customizados y predefinidos, entre muchas otras cosas interesantes que trae este framework.
+
+!!! note
+
+    Muchos errores del MCP pueden suceder por errores de tipos (type hint), por ello es recomendable usar un linter.
 
 
