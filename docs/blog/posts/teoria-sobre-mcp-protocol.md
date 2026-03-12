@@ -111,9 +111,9 @@ Para este ejemplo usaremos una herramienta muy popular en la comunidad de Python
 
 ```bash
 
-    mkdir mcp-test && cd mcp-test
+mkdir mcp-test && cd mcp-test
 
-    uv init .
+uv init .
 
 ```
 
@@ -141,13 +141,13 @@ uv run fastmcp version # Si usas UV
 
 ### Crea un FastMCP Server
 
-Antes de continuar, te recuerdo que toda esta sección de instalación fue sacada de la documentación de [FastMCP](https://gofastmcp.com/getting-started/welcome). Por último, existen 3 pilares esenciales en el núcleo de FastMCP:
+Antes de continuar, te recuerdo que toda esta sección de instalación fue sacada de la documentación de [FastMCP](https://gofastmcp.com/getting-started/welcome). Por último, existen 3 pilares esenciales que un servidor MCP puede exponer:
 
-- **Server**  > Expone herramientas, recursos y prompts al LLM.
+- **Tools** > Acciones llamables, acciones que ejecutan funciones remotas.
 
-- **Apps**    > Herramientas interactivas de UI renderizadas directamente en la conversación.
+- **Resources** > Endpoints de solo lectura, por ejemplo "data://users" o "data://products/product/[product_id]", le permite al cliente obtener data sin exponer una query.
 
-- **Clients** > Conecta cualquier MCP Server, local, remoto o CLI. 
+- **Prompts** > Son templates reusables, el servidor puede usarlos para los clientes y mantener una consistencia en estilo, estructura o instrucciones. 
 
 
 **Código**
