@@ -1,10 +1,10 @@
 ---
 date: 2025-03-07
 categories:
-  - AI
-tags:
-  - AI
   - Software
+tags:
+  - Software
+  - Spanish
 ---
 
 # MCP: Una Guía en Español para Comprender el Protocolo MCP

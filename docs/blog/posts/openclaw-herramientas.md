@@ -1,11 +1,10 @@
 ---
 date: 2025-02-15
 categories:
-  - Openclaw
+  - Software
 tags:
   - Open Source
-  - Herramientas
-  - CLI
+  - Spanish
 ---
 
 # Openclaw: Explorando Herramientas Open Source para Desarrolladores

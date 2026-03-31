@@ -2,12 +2,9 @@
 date: 2025-02-18
 categories:
   - Experimentos
-  - Dinero
-  - Openclaw
 tags:
   - Experimentos
-  - Openclaw
-  - Dinero
+  - Spanish
 ---
 
 # Bot De Apuestas Del Clima - Openclaw (Simmer Market & Polymarket)

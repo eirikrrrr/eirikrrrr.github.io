@@ -1,11 +1,10 @@
 ---
 date: 2025-02-10
 categories:
-  - AI
+  - Software
 tags:
   - LLM
-  - ChatGPT
-  - IA Generativa
+  - Spanish
 ---
 
 # El Auge de los LLMs: ¿Qué son y por qué importan?

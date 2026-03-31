@@ -50,7 +50,7 @@ plugins:
         - Openclaw
         - Software
         - Código
-        - Dinero
+        - Topicos
         - Experimentos
 
 markdown_extensions:
@@ -77,11 +77,9 @@ nav:
   - Laboratorio:
     - blog/index.md
   - Categorías:
-    - AI: categories/ai.md
-    - Openclaw: categories/openclaw.md
     - Software: categories/software.md
     - Código: categories/code.md
-    - Dinero: categories/dinero.md
+    - Topicos: categories/topicos.md
     - Experimentos: categories/experimentos.md
   - Acerca de: about.md
 

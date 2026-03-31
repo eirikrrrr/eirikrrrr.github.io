@@ -1,3 +1,14 @@
+---
+date: 2026-03-31
+categories:
+  - Topicos
+tags:
+  - Hardware
+  - Conceptos
+  - Spanish
+---
+
+
 # CPU, Entendiendo como trabaja (Resumido).
 
 La CPU (Unidad Central de Procesamiento) no es un bloque monolítico, sino un sistema con subsistemas que se comunican constantemente.

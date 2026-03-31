@@ -6,6 +6,7 @@ tags:
   - Python
   - Patrones
   - Optimización
+  - Spanish
 ---
 
 # Python Avanzado: Trucos y Patrones que Todo Dev Debería Conocer

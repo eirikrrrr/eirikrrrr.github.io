@@ -5,7 +5,7 @@ categories:
 tags:
   - Arquitectura
   - Clean Code
-  - Buenas Prácticas
+  - Spanish
 ---
 
 # Principios SOLID: Escribiendo Software que Escala
