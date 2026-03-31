@@ -2,9 +2,9 @@
 
 <div class="hero" markdown>
 
-## Un espacio sobre tecnología, código e inteligencia artificial
+## Un espacio sobre tecnología, código y conceptos basicos.
 
-Explora artículos sobre **Inteligencia Artificial**, **Openclaw**, **Software** y **Código** — escritos para desarrolladores y entusiastas de la tecnología.
+Explora artículos sobre **Conceptos basicos del software**, **Hardware**, y **Código** — escritos para desarrolladores y entusiastas de la tecnología.
 
 [Ver el Blog](blog/index.md){ .md-button .md-button--primary }
 [Acerca de mí](about.md){ .md-button }
@@ -17,21 +17,21 @@ Explora artículos sobre **Inteligencia Artificial**, **Openclaw**, **Software**
 
 <div class="grid cards" markdown>
 
--   :robot: **Inteligencia Artificial**
+-   :books: **Topicos**
 
     ---
 
-    Modelos de lenguaje, redes neuronales, LLMs y todo lo que está transformando el mundo tech.
+    Conceptos basicos y contenido util sobre software/hardware.
 
-    [:octicons-arrow-right-24: Ver posts de AI](categories/ai.md)
+    [:octicons-arrow-right-24: Ver posts Conceptos](categories/topicos)
 
--   :octicons-tools-16: **Openclaw**
+-   🧪 **Experimentos**
 
     ---
 
-    Herramientas, librerías y proyectos open source. Explorando el ecosistema de código abierto.
+    Pruebas, laboratorio, mi primera vez probando alguna herramienta, cosas asi.
 
-    [:octicons-arrow-right-24: Ver posts de Openclaw](categories/openclaw.md)
+    [:octicons-arrow-right-24: Ver posts de Experimentos](categories/experimentos.md)
 
 -   :computer: **Software**
 

@@ -52,10 +52,15 @@ Sin pipeline, cada instrucción se completa antes de iniciar la siguiente. Con p
 
 Ejemplo de pipeline RISC de 5 etapas:
 
+```bash
+
 Ciclo:    1    2    3    4    5    6    7
 Inst 1:  [IF] [ID] [EX] [ME] [WB]
 Inst 2:       [IF] [ID] [EX] [ME] [WB]
 Inst 3:            [IF] [ID] [EX] [ME] [WB]
+
+```
+
 
 Donde:
 - IF: Fetch
@@ -104,6 +109,6 @@ La CPU es el director de orquesta; registros y ALU son músicos, caché es el at
 ## Referencias
 
 
-https://cpu.land/the-basics
+- [CPU.Land](https://cpu.land/the-basics)
 
-https://www.lenovo.com/us/en/glossary/how-does-a-cpu-work/
+- [Lenovo CPU](https://www.lenovo.com/us/en/glossary/how-does-a-cpu-work/)
