@@ -15,14 +15,16 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: Cambiar a modo claro
+
     - scheme: default
       primary: deep purple
       accent: cyan
       toggle:
         icon: material/weather-night
         name: Cambiar a modo oscuro
+
   font:
-    text: Roboto
+    text: Raleway
     code: Roboto Mono
   features:
     - navigation.tabs
@@ -46,8 +48,6 @@ plugins:
       post_date_format: long
       post_url_format: "{date}/{slug}"
       categories_allowed:
-        - AI
-        - Openclaw
         - Software
         - Código
         - Topicos
@@ -74,9 +74,9 @@ markdown_extensions:
 
 nav:
   - Inicio: index.md
-  - Laboratorio:
+  - Blog:
     - blog/index.md
-  - Categorías:
+  - Categorias:
     - Software: categories/software.md
     - Código: categories/code.md
     - Topicos: categories/topicos.md

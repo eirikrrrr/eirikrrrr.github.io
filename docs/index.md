@@ -2,10 +2,6 @@
 
 <div class="hero" markdown>
 
-## Un espacio sobre tecnología, código y conceptos basicos.
-
-Explora artículos sobre **Conceptos basicos del software**, **Hardware**, y **Código** — escritos para desarrolladores y entusiastas de la tecnología.
-
 [Ver el Blog](blog/index.md){ .md-button .md-button--primary }
 [Acerca de mí](about.md){ .md-button }
 
@@ -17,37 +13,37 @@ Explora artículos sobre **Conceptos basicos del software**, **Hardware**, y **C
 
 <div class="grid cards" markdown>
 
--   :books: **Topicos**
+-   :material-book-settings-outline:: **Topicos**
 
     ---
 
-    Conceptos basicos y contenido util sobre software/hardware.
+    Software/Hardware, Conceptos y teoria
 
-    [:octicons-arrow-right-24: Ver posts Conceptos](categories/topicos)
+    [:octicons-arrow-right-24: Ver posts Conceptos](https://eirikrrrr.github.io/blog/category/topicos/)
 
--   🧪 **Experimentos**
-
-    ---
-
-    Pruebas, laboratorio, mi primera vez probando alguna herramienta, cosas asi.
-
-    [:octicons-arrow-right-24: Ver posts de Experimentos](categories/experimentos.md)
-
--   :computer: **Software**
+-   :fontawesome-solid-warning: **Experimentos**
 
     ---
 
-    Arquitectura, diseño de sistemas, buenas prácticas y el arte de construir software de calidad.
+    Laboratorio, mi primera vez probando alguna herramienta, y alguna que otra cosa que quiera documentar.
 
-    [:octicons-arrow-right-24: Ver posts de Software](categories/software.md)
+    [:octicons-arrow-right-24: Ver posts de Experimentos](https://eirikrrrr.github.io/blog/category/experimentos/)
+
+-   :octicons-file-code-16: **Software**
+
+    ---
+
+    Diseño y arquitectura sobre software. 
+
+    [:octicons-arrow-right-24: Ver posts de Software](https://eirikrrrr.github.io/blog/category/software/)
 
 -   :fontawesome-solid-code: **Código**
 
     ---
 
-    Snippets, tutoriales, patrones de diseño y todo lo que te hace mejor programador.
+    Snippets y patrones de diseño en codigo.
 
-    [:octicons-arrow-right-24: Ver posts de Código](categories/code.md)
+    [:octicons-arrow-right-24: Ver posts de Código](https://eirikrrrr.github.io/blog/category/c%C3%B3digo/)
 
 </div>
 
@@ -55,9 +51,9 @@ Explora artículos sobre **Conceptos basicos del software**, **Hardware**, y **C
 
 ## 🚀 Últimas entradas
 
-Visita el [blog completo](blog/index.md) para ver todos los artículos ordenados por fecha.
+Visita el [blog completo](https://eirikrrrr.github.io/blog/) para ver todos los artículos ordenados por fecha.
 
 ---
 
 !!! tip "¿Primera vez aquí?"
-    Comienza explorando los artículos de [AI](categories/ai.md) o echa un vistazo a los tutoriales de [Código](categories/code.md).
+    Comienza explorando los artículos en el blog
