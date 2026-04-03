@@ -8,33 +8,32 @@ tags:
   - Spanish
 ---
 
+## Índice
 
-1. Introducción
-2. Modelo mental de ejecución
-3. Ciclo de instrucción
-4. Registros y ALU
-5. Memoria: RAM y caché
-6. Pipeline y ejecución moderna
-7. Multicore y paralelismo
-8. Interrupciones
-9. Buses y comunicación
-10. Sistema Operativo
+1. [Modelo mental de ejecución](#modelo-mental-de-ejecución)
 
-10.1. Modo usuario vs kernel
+2. [Ciclo de instrucción](#ciclo-de-instrucción)
 
-10.2 Syscalls
+3. [Registros y ALU](#registros-y-alu)
 
-10.3 sysenter / syscall
-    
-10.4 Scheduler
-    
-10.5 Memoria virtual (MMU)
+4. [Caché](#caché)
 
-11. Resumen
-12. Quiz
+5. [Pipelines](#pipelines)
+
+6. [Multicore y paralelismo](#multicore-y-paralelismo)
+
+7. [Quiz basico sobre CPU](#quiz-basico-sobre-cpu)
+
+8. [Solucion Quiz](#solucion-quiz)
+
+9. [CPU | Instrucciones De CPU (ASM, Opcode & RAM)](#cpu--instrucciones-de-cpu-asm-opcode--ram)
+
+10. [Kernel/Supervisor mode and User mode](#kernelsupervisor-mode-and-user-mode)
+
+11. [Referencias](#referencias)
 
 
-# CPU | Fundamentos Basicos (Resumido)
+# 1. Fundamentos Basicos (Resumido)
 
 La CPU (Unidad Central de Procesamiento) es el componente encargado de ejecutar instrucciones y procesar datos. No "piensa" ni "entiende" programas; simplemente sigue órdenes muy básicas definidas en binario.
 
@@ -42,7 +41,7 @@ A nivel físico, no es un bloque monolítico, sino un conjunto de subsistemas es
 
 ---
 
-## 1. Modelo mental de ejecución
+## 1.1 Modelo mental de ejecución
 
 Antes de entrar en detalles internos, necesitas una idea clara de cómo funciona todo el sistema:
 
@@ -482,7 +481,7 @@ Referencias pipelines
 <br>
 
 Hasta ahora hemos asumido a una CPU ejecutando instrucciones de manera secuencial y otras veces usando branch-prediction, pipelines etc.
-  
+
 En la práctica, las CPUs modernas tienen múltiples **núcleos** (cores), lo que permite ejecutar múltiples flujos de instrucciones en paralelo.
 
 ---
