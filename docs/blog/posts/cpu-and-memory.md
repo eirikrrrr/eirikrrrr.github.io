@@ -9,36 +9,264 @@ tags:
 ---
 
 
-# CPU | Fundamentos Basicos (Resumido).
+1. Introducción
+2. Modelo mental de ejecución
+3. Ciclo de instrucción
+4. Registros y ALU
+5. Memoria: RAM y caché
+6. Pipeline y ejecución moderna
+7. Multicore y paralelismo
+8. Interrupciones
+9. Buses y comunicación
+10. Sistema Operativo
 
-La CPU (Unidad Central de Procesamiento) no es un bloque monolítico, sino un sistema con subsistemas que se comunican constantemente, **es el cerebro** de la operacion.
+10.1. Modo usuario vs kernel
 
-![CPU-Overview](./assets/images/cpu-theory/cpu_architecture_overview_v2.svg)
+10.2 Syscalls
 
-## 1. Ciclo de instrucción
+10.3 sysenter / syscall
+    
+10.4 Scheduler
+    
+10.5 Memoria virtual (MMU)
 
-Todo lo que hace una CPU se reduce a repetir un ciclo llamado fetch-decode-execute.
+11. Resumen
+12. Quiz
 
-- **Fetch**: la CU (Control Unit) lee la siguiente instrucción desde la memoria RAM usando el Program Counter (PC), un registro que apunta a la dirección actual. La instrucción viaja por el bus de datos hasta el Instruction Register (IR).
 
-- **Decode**: la CU interpreta el código binario y determina qué operación ejecutar y con qué operandos.
+# CPU | Fundamentos Basicos (Resumido)
 
-- **Execute**: la CU activa los elementos necesarios como: ALU (operaciones matematicas, suma, resta, etc), acceso a memoria, actualización de registros.
+La CPU (Unidad Central de Procesamiento) es el componente encargado de ejecutar instrucciones y procesar datos. No "piensa" ni "entiende" programas; simplemente sigue órdenes muy básicas definidas en binario.
 
-## 2. ALU y registros
+A nivel físico, no es un bloque monolítico, sino un conjunto de subsistemas especializados que trabajan coordinadamente.
 
-La ALU (Arithmetic Logic Unit) ejecuta operaciones aritméticas y lógicas. En la mayoría de la arquitectura no opera sobre RAM directamente; opera sobre registros internos, pequeñas celdas de 64 bits dentro de la CPU.
+---
 
-Componentes relevantes:
+## 1. Modelo mental de ejecución
 
-- PC (Program Counter): dirección de la siguiente instrucción.
-- IR (Instruction Register): instrucción actual.
-- MAR (Memory Address Register): dirección de memoria a leer/escribir.
-- MDR (Memory Data Register): dato transferido desde/hacia RAM.
+Antes de entrar en detalles internos, necesitas una idea clara de cómo funciona todo el sistema:
 
-Registros de propósito general: AX, BX, CX, etc.
+- Un **programa** es una secuencia de instrucciones almacenadas en memoria.
 
-La FPU (Floating Point Unit) es la unidad para operaciones de punto flotante (float, double). Antes era un co-procesador separado (ej. 80387), hoy está integrado en el mismo chip de CPU.
+- La **memoria RAM** es básicamente un array de bytes direccionables.
+
+- La **CPU** es un ejecutor secuencial que:
+  1. Lee una instrucción desde memoria
+  2. La interpreta
+  3. La ejecuta
+
+Ejemplo simplificado en pseudocódigo:
+
+```c
+while (true) {
+    instruccion = memoria[PC];
+    ejecutar(instruccion);
+    PC++;
+}
+```
+
+![CPU-Overview](./assets/images/cpu-theory/cpu-03.jpg)
+
+EL PC (Program Counter) apunta siempre a la siguiente instrucción a ejecutar. Este modelo es solo una simplificación para entender todo lo que viene después.
+
+Con esto dicho, tendras algunas preguntas, en mi caso me preguntaba ¿porque esto no es mas simple?
+
+En la practica, el modelo tiene problemas importantes.
+
+- La CPU es extremadamente rápida
+
+- La RAM es relativamente lenta
+
+- Las instrucciones pueden depender unas de otras
+
+- Hay múltiples programas compitiendo por CPU
+
+Para resolver estos problemas existen:
+
+- Caché
+
+- Pipeline
+
+- Ejecución fuera de orden
+
+- Sistema Operativo
+
+Todo lo que verás a continuación existe para optimizar este modelo basico de CPU que hemos visto antes.
+
+
+## 2. Ciclo de instrucción
+
+Todo lo que hace la CPU se reduce a repetir constantemente un ciclo conocido como:
+
+**fetch → decode → execute**
+
+Este ciclo es la implementación real del modelo visto anteriormente.
+
+![fetch decode and execution cycle](./assets/images/cpu-theory/cpu-04.png)
+
+<br>
+
+### 2.1 Fetch (búsqueda)
+
+La CPU obtiene la siguiente instrucción desde memoria:
+
+1. El **PC (Program Counter)** contiene la dirección de la próxima instrucción.
+
+2. Esa dirección se envía a memoria.
+
+3. La instrucción se carga en el **IR (Instruction Register)**.
+
+```text
+
+PC → Memoria → IR
+
+```
+
+Despues de esto, el PC normalmente se incrementa para apuntar a la siguiente instrucción.
+
+### 2.2 Decode (decodificación)
+
+La Unidad de Control (CU) interpreta la instrucción:
+
+- Qué operación realizar (ADD, MOV, JMP, etc.)
+
+- Qué operandos usar
+
+- Qué unidades internas activar (ALU, memoria, registros)
+
+Aquí la CPU traduce binario a señales de control internas.
+
+### 2.3 Execute (ejecución)
+
+Se realiza la operación:
+
+- Operaciones aritméticas → ALU
+
+- Acceso a memoria → lectura/escritura
+
+- Control de flujo → saltos (JMP, CALL, etc.)
+
+Nota: Usualmente la CPU requiere llamar valores almacenados previamentes, en esos momentos es cuando entran operaciones del control de flujos como (JMP, CALL, etc).
+
+### 2.4 Ejemplo práctico
+
+Supongamos la instrucción:
+
+```text
+
+ADD AX, BX
+
+```
+
+Flujo simplificado:
+
+Fetch: 
+
+- se carga ```ADD AX, BX``` en el IR
+
+Decode: 
+
+la CU identifica:
+
+- Operación: suma
+
+- Operandos: AX y BX
+
+Execute:
+
+- La ALU suma AX + BX
+
+- El resultado se guarda en AX
+
+## 3. Registros y ALU
+
+La CPU no opera directamente sobre la memoria RAM en la mayoria de los casos. En su lugar, utiliza **registros internos**, que son pequeñas unidades de almacenamiento extremadamente rápidas dentro del propio procesador.
+
+### 3.1 Registros
+
+Los registros son celdas de memoria de muy baja latencia (Nanosegundos o menos), tipicamente del tamaño de la arquitectura. Por ejemplo: 64 bits en sistemas modernos.
+
+Se utilizan para:
+
+- Almacenar datos temporales
+- Guardar direcciones de memoria
+- Controlar la ejecución del programa
+
+Acceder a un registro es **mucho más rápido** que acceder a RAM.
+
+### 3.2 Tipos de registros
+
+Registros de control
+
+Controlan el flujo de ejecución:
+
+- **PC (Program Counter)**: dirección de la siguiente instrucción
+- **IR (Instruction Register)**: instrucción actual
+
+Registros de memoria
+
+Intermediarios entre CPU y RAM:
+
+- **MAR (Memory Address Register)**: dirección a acceder
+- **MDR (Memory Data Register)**: dato leído o a escribir
+
+Registros de proposito general
+
+Usados directamente por las instrucciones:
+
+- AX, BX, CX, DX (x86)
+
+- RAX, RBX, RCX, etc. Estos son mas usados en arquitecturas modernas
+
+
+### 3.3 ALU (Arithmetic Logic Unit)
+
+La **ALU** es la unidad encargada de ejecutar operaciones básicas:
+
+- Aritméticas: suma, resta, multiplicación
+- Lógicas: AND, OR, XOR, NOT
+- Comparaciones
+
+Ejemplo:
+
+```
+
+ADD RAX, RBX
+
+```
+
+Flujo:
+
+Se cargan los valores de RAX y RBX en la ALU
+La ALU realiza la suma
+El resultado se escribe en RAX
+
+
+### 3.4 FPU (Floating Point Unit)
+
+La FPU es una unidad especializada para operaciones con números en punto flotante:
+
+- float (32 bits)
+
+- double (64 bits)
+
+Históricamente era un coprocesador separado (ej: [Intel 80387](https://www.dosdays.co.uk/topics/math_coprocessors.php))
+
+### 3.5 Idea simple para comprender la CPU
+
+Esta idea es clave para comprender la CPU, intenta asimilar la siguiente frase.
+
+**La CPU está diseñada para operar sobre registros, no sobre la RAM**
+
+Referencias (Register)
+
+- [Registers](https://clearinfosec.com/cpus-and-registers/)
+
+- [Processor Register](https://en.wikipedia.org/wiki/Processor_register)
+
+- [Logic Unit](https://en.wikipedia.org/wiki/Arithmetic_logic_unit)
+
+- [Floating Point Unit](https://en.wikipedia.org/wiki/Floating-point_unit)
 
 ## 3. Jerarquía de caché y velocidad
 
