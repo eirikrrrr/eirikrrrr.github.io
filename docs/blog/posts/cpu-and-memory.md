@@ -258,7 +258,7 @@ Esta idea es clave para comprender la CPU, intenta asimilar la siguiente frase.
 
 **La CPU está diseñada para operar sobre registros, no sobre la RAM**
 
-Referencias (Register)
+Enlaces de Referencias - Registers, FPU & LU
 
 - [Registers](https://clearinfosec.com/cpus-and-registers/)
 
@@ -268,72 +268,321 @@ Referencias (Register)
 
 - [Floating Point Unit](https://en.wikipedia.org/wiki/Floating-point_unit)
 
-## 3. Jerarquía de caché y velocidad
+## 4. Caché
 
-La RAM es varias órdenes de magnitud más lenta que la CPU. La caché actúa como un buffer ultrarrápido.
+La caché es una memoria pequeña y muy rapida que almacena copias de datos frecuentemente utilizados.
+
+Niveles típicos:
+
+- **L1**: muy pequeña, extremadamente rápida (por núcleo)
+
+- **L2**: más grande, algo más lenta
+
+- **L3**: compartida entre núcleos, más grande pero más lenta
+
+Flujo de interacción CPU
+
+```text
+
+CPU → L1 → L2 → L3 → RAM
+
+```
+
+En la siguiente imagen se expresa de una mejor manera.
 
 ![CPU-Overview](./assets/images/cpu-theory/cache_hierarchy_v2.svg)
 
-La CPU busca datos primero en L1. Si hay cache miss, busca en L2, luego L3 y, si no está, en RAM. La penalización por miss puede costar cientos de ciclos. Compiladores y SO modernos buscan maximizar cache hits.
+!!! note
 
-## 4. Pipeline y paralelismo interno
+    Si el dato no se encuentra en un nivel se llama cache miss y tiene una penalización para la CPU.
 
-Sin pipeline, cada instrucción se completa antes de iniciar la siguiente. Con pipeline, las etapas se superponen, lo que mejora rendimiento.
+
+### 4.1 Cache hit vs Cache Miss
+
+- Cache hit: el dato está en caché - Acceso rápido.
+
+- Cache miss: El dato no está - Acceso lento (penalización, mas tiempo en realizar una ejecución).
+
+Un miss puede costar cientos de ciclos, afectando directamente al rendimiento.
+
+La caché funciona gracias a un principio clave:
+
+- **Localidad de referencia** : Los programas tienden a acceder a la memoria de forma predecible.
+
+- **Localidad temporal** : Si accedes a un dato, es probable que lo vuelvas a usar pronto.
+
+Cache lines
+
+La caché no carga bytes individuales, sino bloques llamados cache lines (tipicamente de 64 bytes).
+
+Esto optimiza la localidad espacial.
+
+Ejemplo:
+
+- Accedes array[0]
+
+- Se carga un bloque completo (ej: array[0] a array[30])
+
+
+### 4.2 Idea clave para entender Caché
+
+**La CPU no es lenta; lo que es lento es acceder a la memoria, la caché existe para ocultar esa latencia**.
+
+Referencias a Cache
+
+- [Cache Miss](https://kerneldigest.dev/glosario/hardware/cache-miss/)
+
+- [Cache Concepto e Historia](https://es.wikipedia.org/wiki/Cach%C3%A9_(inform%C3%A1tica))
+
+## 5. Pipelines
+
+El modelo fetch → decode → execute sugiere ejecución secuencial.  
+
+Sin embargo, las CPUs modernas ejecutan múltiples instrucciones simultáneamente mediante **pipeline**.
+
+---
+
+### 5.1 Concepto sobre los Pipelines 
+
+El pipeline divide la ejecución de una instrucción en etapas, permitiendo que varias instrucciones estén en distintas fases al mismo tiempo.
+
 
 Ejemplo de pipeline RISC de 5 etapas:
 
 ```bash
 
 Ciclo:    1    2    3    4    5    6    7
-Inst 1:  [IF] [ID] [EX] [ME] [WB]
-Inst 2:       [IF] [ID] [EX] [ME] [WB]
-Inst 3:            [IF] [ID] [EX] [ME] [WB]
+Inst 1:  [IF] [ID] [EX] [MEM] [WB]
+Inst 2:       [IF] [ID] [EX] [MEM] [WB]
+Inst 3:            [IF] [ID] [EX] [MEM] [WB]
 
 ```
-
 
 Donde:
 - IF: Fetch
 - ID: Decode
 - EX: Execute
-- ME: Memory Access
+- MEM: Memory Access
 - WB: Write Back
 
-Los hazards (dependencias entre instrucciones) pueden generar stalls. Las CPU modernas usan predicción de saltos y ejecución fuera de orden para mitigarlos.
+### 5.2 Beneficios Claves
 
-## 5. Comunicación con RAM: bus y controlador
+Sin pipeline:
 
-La CPU no accede a RAM directamente. El proceso típico:
+- 1 instrucción tarda N ciclos.
 
-1. La CPU coloca la dirección en MAR.
-2. El bus de direcciones lleva la dirección al controlador de memoria (integrado en CPU / antiguo Northbridge).
-3. El controlador accede a RAM y devuelve el dato en MDR.
-4. La CU copia el dato al registro destino.
+Con pipeline:
 
-El ancho del bus (64 bits moderno) y la velocidad (MHz/GHz) determinan el ancho de banda, un cuello de botella crítico.
+- Se completa 1 instrucción por ciclo (idealmente, pueden haber excepciones).
 
-## 6. Buses y dispositivos externos
+Sin embargo esto incrementa el throughout, no la latencia invidual.
 
-Dispositivos externos se conectan mediante buses:
+### 5.3 Hazards
 
-- PCIe: GPU, NVMe.
-- SATA/NVMe: almacenamiento.
-- USB: periféricos.
-- APIC/IOAPIC: interrupciones.
+El pipeline introduce conflictos llamados hazards.
 
-Las interrupciones interrumpen la ejecución para ejecutar ISRs (Interrupt Service Routines) y luego se reanuda.
+Data hazards (Dependencias de datos)
 
-## 7. SO: intermediario
+Ocurren cuando una instrucción depende del 
+resultado de otra:
 
-El sistema operativo administra acceso y recursos:
+```
 
-- Scheduler: decide qué proceso ejecuta y cuándo (Round Robin, CFS, etc.).
-- MMU: traduce direcciones virtuales a físicas y protege memoria.
-- DMA (Direct Memory Access): permite a dispositivos leer/escribir RAM sin CPU en cada transferencia.
+ADD RAX, RBX
+SUB RCX, RAX
 
-## Resumen Del Funcionamiento
+```
 
-La CPU es el director de orquesta; registros y ALU son músicos, caché es el atril, la RAM es el archivo y el bus es el pasillo. La CU coordina todo ciclo a ciclo, miles de millones de veces por segundo.
+La segunda instrucción necesita el resultado de la primera (RAX).
+
+Solución.
+
+- Stalls (espera)
+
+- Forwarding (Bypass de datos)
+
+Control hazards (saltos)
+
+Ocurren en instrucciones de salto:
+
+```
+
+JMP tag
+
+```
+
+La CPU no sabe que instrucción ejecutar después hasta resolver la condición.
+
+### 5.4 Branch prediction
+
+Para evitar detener el pipeline, la CPU predice el resultado de saltos.
+
+- Si acierta: ejecución continua
+
+- Si falla: pipeline flush (penalización)
+
+Las CPUs modernas usan algoritmos sofisticados basados en historial.
+
+### 5.5 Ejecucion fuera de orden (Out-of-order execution)
+
+Las CPUs modernas no ejecutan instrucciones estrictamente en orden.
+
+Ejemplo.
+
+```
+
+1. ADD RAX, RBX
+
+2. MUL RCX, RDX
+
+```
+
+Si la instrucción 1 esta bloqueada (esperando datos), la CPU puede ejecutar la 2 primero.
+
+Esto mejora el uso de recursos internos.
+
+
+### 5.6 Ejecución especulativa
+
+La CPU puede ejecutar instrucciones antes de saber si realmente se necesitan.
+
+Ejemplo:
+
+- Predice un salto
+
+- Ejecuta instrucciones siguientes
+
+- Si la predicción falla - descarta resultados.
+
+Esto mejora rendimiento, pero introduce problemas de seguridad (Spectre, MeltDown, etc).
+
+### 5.7 Idea clave para entender Pipelines
+
+Las CPUs modernas no ejecutan instrucciones de forma estrictamente secuencial.
+
+En realidad
+
+- Reordenan.
+
+- Predicen.
+
+- Ejecutan en paralelo.
+
+
+Referencias pipelines
+
+- [Pipelines](https://carteleras.webcindario.com/6-Pipeline.pdf)
+
+- [Stony Brook University](https://compas.cs.stonybrook.edu/~nhonarmand/courses/sp15/cse502/slides/05-pipelining.pdf)
+
+## 6. Multicore y paralelismo
+
+![Multi core and single core](./assets/images/cpu-theory/cpu-05.webp)
+
+<br>
+
+Hasta ahora hemos asumido a una CPU ejecutando instrucciones de manera secuencial y otras veces usando branch-prediction, pipelines etc.
+  
+En la práctica, las CPUs modernas tienen múltiples **núcleos** (cores), lo que permite ejecutar múltiples flujos de instrucciones en paralelo.
+
+---
+
+### 6.1 ¿Qué es un núcleo?
+
+Un **núcleo** es esencialmente una CPU completa e independiente dentro del mismo chip:
+
+- Tiene su propio pipeline
+
+- Tiene sus propios registros
+
+- Puede ejecutar instrucciones de forma autónoma
+
+Un procesador de 4 núcleos puede ejecutar 4 instrucciones (o más) en paralelo.
+
+---
+
+### 6.2 Paralelismo vs concurrencia
+
+Es importante no confundir estos conceptos:
+
+- **Paralelismo**: múltiples instrucciones ejecutándose físicamente al mismo tiempo (múltiples núcleos)
+
+- **Concurrencia**: múltiples tareas progresando intercaladamente (aunque haya un solo núcleo)
+
+Ejemplo:
+
+- 1 núcleo → concurrencia
+
+- N núcleos → paralelismo real
+
+---
+
+### 6.3 Hilos (threads)
+
+Un **hilo** es una unidad de ejecución dentro de un proceso.
+
+- Cada hilo tiene su propio estado (registros, stack)
+
+- Comparte memoria con otros hilos del mismo proceso
+
+El sistema operativo asigna hilos a núcleos.
+
+---
+
+### 6.4 SMT / Hyperthreading
+
+SMT (Simultaneous Multithreading), conocido comercialmente como **Hyperthreading**, permite que un núcleo ejecute múltiples hilos de forma simultánea.
+
+Importante:
+
+> No duplica el núcleo físico
+
+Lo que hace es:
+
+- Compartir recursos del núcleo
+
+- Aprovechar ciclos ociosos
+
+Ejemplo:
+
+- Un núcleo con SMT puede manejar 2 hilos
+
+- Pero el rendimiento no es 2x (típicamente 20–40% extra)
+
+---
+
+### 6.5 ¿Por qué existe SMT?
+
+Dentro de un núcleo hay unidades que no siempre están ocupadas:
+
+- ALU
+- Unidades de carga/almacenamiento
+- Pipeline parcialmente vacío
+
+SMT permite que otro hilo use esos recursos en paralelo.
+
+---
+
+### 6.6 Escalabilidad real
+
+Más núcleos ≠ más rendimiento automáticamente.
+
+Limitaciones:
+
+- Código secuencial (Ley de Amdahl)
+
+- Contención de memoria
+
+- Sincronización entre hilos
+
+Ejemplo:
+
+```
+
+Si el 50% de un programa es secuencial,
+el speedup máximo es limitado aunque aumentes núcleos.
+
+```
 
 
 ## Quiz basico sobre CPU
