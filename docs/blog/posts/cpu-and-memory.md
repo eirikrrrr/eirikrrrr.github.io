@@ -583,6 +583,154 @@ el speedup máximo es limitado aunque aumentes núcleos.
 
 ```
 
+## 7. Interrupciones
+
+Hasta ahora hemos visto la CPU ejecutando instrucciones de forma continua.  
+Sin embargo, en un sistema real, la CPU necesita reaccionar a eventos externos e internos.
+
+Para esto existen las **interrupciones**.
+
+---
+
+### 7.1 ¿Qué es una interrupción?
+
+Una **interrupción** es una señal que detiene temporalmente la ejecución normal de la CPU para atender un evento.
+
+Ejemplos:
+
+- Pulsar una tecla
+
+- Llegada de un paquete de red
+
+- Finalización de una operación de disco
+
+
+### 7.2 Flujo de una interrupción
+
+Cuando ocurre una interrupción, la CPU realiza:
+
+1. Finaliza la instrucción actual
+
+2. Guarda el estado actual (registros, PC, flags)
+
+3. Salta a una rutina especial llamada **ISR (Interrupt Service Routine)**
+
+4. Ejecuta la [ISR](https://wiki.osdev.org/Interrupt_Service_Routines)
+
+5. Restaura el estado previo
+
+6. Continúa la ejecución original
+
+```
+
+Programa → [INTERRUPCION] → ISR → retorno → Programa
+
+```
+
+!!! note
+
+    La ISR es una funcionalidad es una pieza especial de software que se ejecuta automaticamente por un microcontrolador en respuesta a un evento de la CPU o el Hardware, Pausa el programa principal mientras se atienden los eventos y luego lo reanuda, esto evita el bloequeo o la corrución de los programas.
+
+!!! note
+
+    Un ejemplo de interrupción de hardware es el teclado: cada vez que se pulsa una tecla, el teclado activa la IRQ1 (Solicitud de Interrupción 1) y se llama al controlador de interrupción correspondiente. Los temporizadores y la finalización de las solicitudes de disco son otras posibles fuentes de interrupciones de hardware.
+
+
+No hay un mejor lugar donde definan cada paso y especificaciones del ISR que en OSDev.org - Puedes chequearlo [aqui](https://wiki.osdev.org/Interrupt_Service_Routines)
+
+
+### 7.3 Interrupt Vector Table (IVT)
+
+La CPU necesita saber qué ISR ejecutar según la interrupción.
+
+Para ello existe una tabla:
+
+Interrupt Vector Table (IVT) o IDT en sistemas modernos
+Asocia cada interrupción con una dirección de memoria (handler)
+
+Ejemplo conceptual:
+
+```
+
+Interrupt 0 → dirección X
+
+Interrupt 1 → dirección Y
+
+Interrupt N → dirección Z
+
+```
+
+### 7.4 Tipos de interrupciones
+
+Interrupciones de hardware
+
+Provienen de dispositivos externos:
+
+
+- Teclado
+
+- Tarjeta de red
+
+- Disco
+
+Son asíncronas respecto al flujo del programa.
+
+**Interrupciones de software**
+
+Generadas por instrucciones del propio programa:
+
+```
+
+INT 0x80
+
+```
+
+Se usan para interactuar con el sistema operativo (ej: syscalls en sistemas antiguos).
+
+**Excepciones (internas)**
+
+Eventos generados por la propia CPU:
+
+- División por cero
+
+- Fallo de página (page fault)
+
+- Instrucción inválida
+
+### 7.5 Controlador de interrupciones
+
+El hardware usa controladores como:
+
+- APIC (Advanced Programmable Interrupt Controller)
+
+- IOAPIC
+
+Estos controladores tienen las siguientes funciones:
+
+- Gestionar múltiples interrupciones
+
+- Priorizar eventos
+
+- Asignar interrupciones a núcleos específicos
+
+### 7.6 Idea clave para entender sobre interrupciones
+
+Muchos podrian pensar que la CPU tiene un bucle infinito donde esta constantemente analizando eventos externos para levantar un interrupt, pero esto es ineficiente.
+
+```c
+
+while (true) {
+    if (teclado_tiene_datos()) {
+        leer();
+    }
+}
+
+```
+
+Al contrario de esto la CPU solo es interrumpida cuando un dispositivo notifica a la CPU que tiene datos.
+
+Las interrupciones permiten a la CPU reaccionar a eventos sin perder tiempo consultando constantemente.
+
 
 ## Quiz basico sobre CPU
 
@@ -741,50 +889,200 @@ D) Bottleneck en CPU
 
 ```
 
-# CPU | Instrucciones De CPU (ASM, Opcode & RAM)
 
-Las "instrucciones" que la CPU ejecuta, son solo datos binarios, el formato de todas las instrucciones es el mismo siempre y esta compuesto por dos elementos:
+## Quiz sobre CPU (Medio)
 
-- La operacion a ejecutar
+### 1. Modelo de ejecución
 
-- Los operando o valores.
+¿Qué representa realmente el Program Counter (PC)?
 
-
-Antes de continuar quiero que observes el nivel en el que se encuentran las instrucciones de CPU respecto a los lenguajes de programacion.
-
-![level-programming-lang](./assets/images/cpu-theory/cpu-01.jpg)
+A) El resultado de la última operación  
+B) La dirección de la siguiente instrucción  
+C) El registro de datos principal  
+D) El estado del sistema operativo  
 
 <br>
 
-Nota: No todas las instrucciones binarias pueden ser representadas 1:1 como codigo maquina.
+### 2. Ciclo de instrucción
 
-En la imagen podemos apreciar una instruccion "add" escrita en ASM (Assembly), esta instruccion tiene un opcode (operation code) el cual representa la operacion que va a realizar, y los demas valores restantes son los que usara.
+¿Qué ocurre durante la fase de decode?
 
-![level-programming-lang](./assets/images/cpu-theory/cpu-02.png)
+A) Se ejecuta la operación en la ALU  
+B) Se obtiene la instrucción desde RAM  
+C) Se interpreta la instrucción y se generan señales de control  
+D) Se escribe el resultado en memoria  
 
-La RAM es la memoria principal del ordenador, es un espacio amplio que almacena datos que utilizan los programas que se ejecutan en el ordenador. Esto incluye tnto el codigo del programa en si mismo como el codigo que constituye el nucleo del sistema operativo. 
+<br>
 
-La CPU siempre lee el codigo maquina directamente desde la RAM, y el codigo no se puede ejecutar si no esta cargado en la RAM.
+### 3. Registros
 
-La CPU almacena un puntero de instruccion que apunta a la ubicacion en la RAM de donde se va a recuperar la siguiente instruccion. Tras ejecutar cada instruccion, la CPU mueve el puntero y repite el proceso, este es el ciclo que ya hablamos anteriormente conocido como fetch-decode-execute (FDE).
+¿Por qué la CPU usa registros en lugar de operar directamente sobre RAM?
 
-Tras ejecutar una instruccion, el puntero avanza hasta situarse despues de dicha instruccion en la RAM, de modo que ahora apunta a la siguiente instruccion. Asi es como se ejecuta el codigo.
+A) Porque la RAM es más grande  
+B) Porque los registros son más rápidos  
+C) Porque la RAM no puede almacenar enteros  
+D) Porque la ALU no soporta RAM  
 
-El puntero de instruccion se almacena en un registro. Los registros son compartimentos de almacenamiento que la CPU puede leer y escribir con extrema rapidez. Cada arquitectura de CPU tiene un conjunto de registros fijos, que se utilizan para todo.
+<br>
 
-## Kernel/Supervisor mode and User mode
+### 4. ALU
 
-Usualmente en los procesadores existen dos modos de control (modo privilegiado o anillo), un procesador esta en control de lo que esta permitido hacer. Las arquitecturas modernas usan al menos dos opciones Modo Kernel y modo usuario.
+¿Cuál de las siguientes operaciones NO realiza típicamente la ALU?
 
-- En el modo kernel: La CPU tiene permisos para ejecutar cualquier instruccion y acceder a cualquier memoria. 
+A) Suma  
+B) Comparación  
+C) Acceso a disco  
+D) Operaciones lógicas  
 
-- En modo usuario, solo un subconjunto de instrucciones son permitidas, I/O y la memoria esta limitada.
+<br>
 
+### 5. Caché
 
+¿Qué causa un **cache miss**?
 
+A) La CPU ejecuta una instrucción inválida  
+B) El dato no se encuentra en el nivel de caché actual  
+C) El pipeline se detiene  
+D) La RAM falla  
+
+<br>
+
+### 6. Localidad
+
+La **localidad espacial** implica:
+
+A) Reutilizar el mismo dato repetidamente  
+B) Acceder a direcciones de memoria cercanas  
+C) Ejecutar múltiples hilos  
+D) Reducir el tamaño de caché  
+
+<br>
+
+### 7. Pipeline
+
+¿Cuál es el principal beneficio del pipeline?
+
+A) Reduce el tamaño de la CPU  
+B) Reduce el consumo energético  
+C) Aumenta el throughput de instrucciones  
+D) Elimina dependencias  
+
+<br>
+
+### 8. Hazards
+
+¿Qué tipo de hazard ocurre en este caso?
+
+```asm
+
+ADD RAX, RBX
+SUB RCX, RAX
+
+```
+
+A) Control hazard
+B) Structural hazard
+C) Data hazard
+D) Cache hazard
+
+<br>
+
+9. Branch prediction
+
+¿Qué ocurre cuando la predicción de salto falla?
+
+A) Se reinicia la CPU
+B) Se ignora la instrucción
+C) Se vacía el pipeline (flush)
+D) Se detiene el sistema operativo
+
+<br>
+
+10. Out-of-order execution
+
+¿Cuál es el objetivo principal?
+
+A) Ejecutar instrucciones más lentamente
+B) Mantener el orden exacto del programa
+C) Aprovechar mejor los recursos de la CPU
+D) Reducir el tamaño del código
+
+<br>
+
+11. Multicore
+
+¿Qué define el paralelismo real?
+
+A) Ejecutar tareas en diferentes momentos
+B) Ejecutar múltiples instrucciones simultáneamente en distintos núcleos
+C) Cambiar rápidamente entre tareas
+D) Reducir el uso de memoria
+
+<br>
+
+12. SMT / Hyperthreading
+
+¿Qué hace realmente SMT?
+
+A) Duplica núcleos físicos
+B) Duplica la memoria RAM
+C) Permite que un núcleo ejecute múltiples hilos compartiendo recursos
+D) Aumenta la frecuencia del CPU
+
+<br>
+
+13. Interrupciones
+
+¿Qué ocurre primero cuando llega una interrupción?
+
+A) Se ejecuta la ISR inmediatamente
+B) Se guarda el estado actual de la CPU
+C) Se reinicia el programa
+D) Se limpia la caché
+
+<br>
+
+14. ISR
+
+¿Qué es una ISR?
+
+A) Un registro interno
+B) Una rutina que maneja una interrupción
+C) Un tipo de caché
+D) Un hilo del sistema operativo
+
+<br>
+15. Polling vs interrupciones
+
+¿Por qué las interrupciones son más eficientes que polling?
+
+A) Usan más CPU
+B) Evitan consultas constantes innecesarias
+C) Eliminan la RAM
+D) Reducen el número de instrucciones
+
+```
+1. b
+2. c
+3. b
+4. c
+5. b
+6. b
+7. c
+8. c
+9. c
+10. c
+11. b
+12. c
+13. b
+14. b
+15. b
+```
 
 ## Referencias
 
 - [CPU.Land](https://cpu.land/the-basics)
 
 - [Lenovo CPU](https://www.lenovo.com/us/en/glossary/how-does-a-cpu-work/)
+
+- [OSDev org](https://wiki.osdev.org/)
