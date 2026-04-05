@@ -896,9 +896,12 @@ D) Bottleneck en CPU
 
 ¿Qué representa realmente el Program Counter (PC)?
 
-A) El resultado de la última operación  
+A) El resultado de la última operación 
+
 B) La dirección de la siguiente instrucción  
+
 C) El registro de datos principal  
+
 D) El estado del sistema operativo  
 
 <br>
@@ -908,8 +911,11 @@ D) El estado del sistema operativo
 ¿Qué ocurre durante la fase de decode?
 
 A) Se ejecuta la operación en la ALU  
+
 B) Se obtiene la instrucción desde RAM  
+
 C) Se interpreta la instrucción y se generan señales de control  
+
 D) Se escribe el resultado en memoria  
 
 <br>
@@ -919,8 +925,11 @@ D) Se escribe el resultado en memoria
 ¿Por qué la CPU usa registros en lugar de operar directamente sobre RAM?
 
 A) Porque la RAM es más grande  
+
 B) Porque los registros son más rápidos  
+
 C) Porque la RAM no puede almacenar enteros  
+
 D) Porque la ALU no soporta RAM  
 
 <br>
@@ -930,8 +939,11 @@ D) Porque la ALU no soporta RAM
 ¿Cuál de las siguientes operaciones NO realiza típicamente la ALU?
 
 A) Suma  
+
 B) Comparación  
+
 C) Acceso a disco  
+
 D) Operaciones lógicas  
 
 <br>
@@ -941,8 +953,11 @@ D) Operaciones lógicas
 ¿Qué causa un **cache miss**?
 
 A) La CPU ejecuta una instrucción inválida  
+
 B) El dato no se encuentra en el nivel de caché actual  
+
 C) El pipeline se detiene  
+
 D) La RAM falla  
 
 <br>
@@ -952,8 +967,11 @@ D) La RAM falla
 La **localidad espacial** implica:
 
 A) Reutilizar el mismo dato repetidamente  
+
 B) Acceder a direcciones de memoria cercanas  
+
 C) Ejecutar múltiples hilos  
+
 D) Reducir el tamaño de caché  
 
 <br>
@@ -963,8 +981,11 @@ D) Reducir el tamaño de caché
 ¿Cuál es el principal beneficio del pipeline?
 
 A) Reduce el tamaño de la CPU  
+
 B) Reduce el consumo energético  
+
 C) Aumenta el throughput de instrucciones  
+
 D) Elimina dependencias  
 
 <br>
@@ -981,84 +1002,109 @@ SUB RCX, RAX
 ```
 
 A) Control hazard
+
 B) Structural hazard
+
 C) Data hazard
+
 D) Cache hazard
 
 <br>
 
-9. Branch prediction
+**9 Branch prediction**
 
 ¿Qué ocurre cuando la predicción de salto falla?
 
 A) Se reinicia la CPU
+
 B) Se ignora la instrucción
+
 C) Se vacía el pipeline (flush)
+
 D) Se detiene el sistema operativo
 
 <br>
 
-10. Out-of-order execution
+**10 Out-of-order execution**
 
 ¿Cuál es el objetivo principal?
 
 A) Ejecutar instrucciones más lentamente
+
 B) Mantener el orden exacto del programa
+
 C) Aprovechar mejor los recursos de la CPU
+
 D) Reducir el tamaño del código
 
 <br>
 
-11. Multicore
+**11 Multicore**
 
 ¿Qué define el paralelismo real?
 
 A) Ejecutar tareas en diferentes momentos
+
 B) Ejecutar múltiples instrucciones simultáneamente en distintos núcleos
+
 C) Cambiar rápidamente entre tareas
+
 D) Reducir el uso de memoria
 
 <br>
 
-12. SMT / Hyperthreading
+**12 SMT / Hyperthreading**
 
 ¿Qué hace realmente SMT?
 
 A) Duplica núcleos físicos
+
 B) Duplica la memoria RAM
+
 C) Permite que un núcleo ejecute múltiples hilos compartiendo recursos
+
 D) Aumenta la frecuencia del CPU
 
 <br>
 
-13. Interrupciones
+**13 Interrupciones**
 
 ¿Qué ocurre primero cuando llega una interrupción?
 
 A) Se ejecuta la ISR inmediatamente
+
 B) Se guarda el estado actual de la CPU
+
 C) Se reinicia el programa
+
 D) Se limpia la caché
 
 <br>
 
-14. ISR
+**14 ISR**
 
 ¿Qué es una ISR?
 
 A) Un registro interno
+
 B) Una rutina que maneja una interrupción
+
 C) Un tipo de caché
+
 D) Un hilo del sistema operativo
 
 <br>
-15. Polling vs interrupciones
+
+**15 Polling vs interrupciones**
 
 ¿Por qué las interrupciones son más eficientes que polling?
 
 A) Usan más CPU
+
 B) Evitan consultas constantes innecesarias
+
 C) Eliminan la RAM
+
 D) Reducen el número de instrucciones
 
 ```
