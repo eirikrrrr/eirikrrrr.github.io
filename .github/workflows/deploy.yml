@@ -36,14 +36,8 @@ jobs:
       - name: Construir el sitio
         run: npm run build
 
-      # El PDF del CV se imprime desde la página /cv ya construida, de modo
-      # que web y PDF salen siempre de la misma fuente de datos.
-      - name: Instalar Chromium para la impresión del PDF
-        run: npx playwright install --with-deps chromium
-
-      - name: Generar el CV en PDF
-        run: npm run pdf
-
+      # El CV en PDF se sirve tal cual desde public/cv-erick-graterol.pdf,
+      # así que el build ya lo copia a dist/ sin regenerarlo.
       - name: Verificar que el PDF existe
         run: test -s dist/cv-erick-graterol.pdf
 
