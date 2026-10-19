@@ -34,8 +34,8 @@ export const perfil = {
   permiso: 'Permiso de residencia y trabajo en España (TIE/NIE)',
 
   // ── Ubicación y disponibilidad ────────────────────────────────
-  ubicacion: 'Alicante, España',
-  ubicacionCorta: 'Alicante',
+  ubicacion: 'Valencia, España',
+  ubicacionCorta: 'Valencia',
   pais: 'ES',
   disponibilidad: 'Disponible para incorporación',
   modalidad: 'Remoto o híbrido',
